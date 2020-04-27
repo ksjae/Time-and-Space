@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>간단한 지도 표시하기</title>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=36328782135ebb750c02ef1c94c244ad"></script>
+    <script src="./main.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+<div class="container">
+  <input type="text" placeholder="Search...">
+  <div class="search"></div>
+</div>
+<div id="map" style="width:100%;height:90vh;"></div>
+<script>
+//ONLY INSERT INIT CODE
+var map = null;
+if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(registerPosition);
+      } else {
+        alert("사용자의 위치를 가져올 수 없습니다. 본 서비스는 위치 정보 없이 작동을 보증하지 않습니다.");
+        userLatitude = 37.359570;
+        userLongitude = 127.105399
+}
+</script>
+<input id="clickMe" type="button" value="Init" onclick="init();" />
+<input id="clickMe" type="button" value="Marker" onclick="makeMarker(new kakao.maps.LatLng(37.3595704, 127.105399), 0);" />
+<input id="clickMe" type="button" value="킥고잉" onclick="getKickGoing(37.49753128060163,127.02815273412143);" />
+<input id="clickMe" type="button" value="지빌리티" onclick="getGbility(37.49753128060163,127.02815273412143);" />
+<input id="clickMe" type="button" value="씽씽" onclick="getXingxing(37.49753128060163,127.02815273412143);" />
+</body>
+</html>
