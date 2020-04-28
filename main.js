@@ -6,13 +6,7 @@ class Vehicle {
         self.serviceType = serviceType;
     }
 }
-
-function initMap() {
-            map = new kakao.maps.Map(document.getElementById('map'), {
-                center: new kakao.maps.LatLng(37.3595704, 127.105399), //지도의 중심좌표.
-	            level: 4
-            });
-}
+var ps = null;
 function makeMarker(position, title) {
 
     let imageSize = new kakao.maps.Size(24, 35); 
@@ -50,9 +44,17 @@ function init() {
         zoom: 15
     });
     makeMarker(new kakao.maps.LatLng(userLatitude, userLongitude), 0);
+    ps = new kakao.maps.services.Places(); 
 }
 
-
+function searchPlace(keyword) {
+    var places = null;
+    ps.keywordSearch(keyword, function (data, status, pagination) {
+        console.log(data)
+    });
+    
+    return places
+}
 
 var vehicleMarkerArea = 0.04;
 
