@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.1, user-scalable=yes">
-    <title>TIME N SPACE</title>
+    <title>타고파 - 내 주변의 스쿠터는 어디 있을까?</title>
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=36328782135ebb750c02ef1c94c244ad&libraries=services"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="./main.js"></script>
@@ -14,7 +14,7 @@
 <div class="container">
   <input type="text" placeholder="목적지 검색" id="searchField" onclick="searchResultBox.show()" onfocusout="searchResultBox.hide()" onkeypress="searchPlace(document.getElementById('searchField').value);">
   <div class="search"></div>
-  <div class="search-result" id="search-result"> This box is initially hidden</div>
+  <div class="search-result" id="search-result"></div>
 </div>
  <img src="logo.png" height="40px" class="logo" />
 </div>
@@ -30,6 +30,7 @@ if (navigator.geolocation) {
         userLatitude = 37.359570;
         userLongitude = 127.105399
 }
+searchResultBox.hide()
 //JS WAIT ASYNC FOR LOCATION DATA
 //init();
 </script>
@@ -39,6 +40,10 @@ if (navigator.geolocation) {
 <input id="clickMe" type="button" value="킥고잉" onclick="getKickGoing(37.49753128060163,127.02815273412143);" />
 <input id="clickMe" type="button" value="지빌리티" onclick="getGbility(37.49753128060163,127.02815273412143);" />
 <input id="clickMe" type="button" value="씽씽" onclick="getXingxing(37.49753128060163,127.02815273412143);" />
+</div>
+<div class="footer">
+    <p>이 서비스는 이용자의 위치를 이용하여 서비스합니다. <a href="tos.html">개인정보취급방침</a></p>
+    <p>이 서비스는 Proof of Concept입니다. 본 서비스는 일명 '데이터 3법'에 포함되는 정보통신망 이용촉진 및 정보보호 등에 관한 법률에 의거하여 웹에서 접근이 허용된 API만 이용하여 제작되었습니다.</p>
 </div>
 </body>
 </html>

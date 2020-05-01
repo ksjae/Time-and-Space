@@ -25,6 +25,13 @@ function makeMarker(position, title) {
 
     return marker;
 }
+function updateMarker(vehicle){
+    //DELETE MARKER
+    //ADD ACCORDING TO LOCATION
+    makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%")
+}
+
+
 function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition);
@@ -38,6 +45,7 @@ function registerPosition(position) {
     userLongitude = position.coords.longitude;
     userLatitude = position.coords.latitude;
 }
+
 function init() {
     map = new kakao.maps.Map(document.getElementById('map'), {
         center: new kakao.maps.LatLng(userLatitude, userLongitude),
@@ -47,18 +55,41 @@ function init() {
     ps = new kakao.maps.services.Places(); 
 }
 
-function searchPlace(keyword) {
-    var places = null;
-    $('#search-result').text('I am getting refreshed every 3 seconds..! Random Number ==> ');
-    //ps.keywordSearch(keyword, function (data, status, pagination) {
-    //    console.log(data)
-    //});
-    
-    return places
+var searchResultBox = {
+    show : function() {
+        $( "#search-result" ).show();
+    },
+    hide : function() {
+        $( "#search-result" ).hide();
+    },
+    update : function() {
+        //풀네임, 주소, category_group_name 출력
+        $( "#search-result p" ).remove();
+        this.results.forEach(result => {
+            $( "#search-result" ).append( "<p>" + result.place_name + "</p>" );
+        });  
+    },
+    results : []
 }
 
-var vehicleMarkerArea = 0.04;
+function searchPlace(keyword) {
+    ps.keywordSearch(keyword, function (data, status, pagination) {
+        console.log(data);
+        data.forEach(item => {
+            searchResultBox.results.push(item)
+            console.log(item);
+        });
+        searchResultBox.update();
+    });
+    //return places
+}
 
+
+
+
+
+
+var vehicleMarkerArea = 0.04;
 function getKickGoing(lat,long){
     //ID 1
     const Http = new XMLHttpRequest();
@@ -70,31 +101,6 @@ function getKickGoing(lat,long){
         console.log(Http.responseText)
     }
 }
-/*
-function getXingxing(lat,long){
-    //ID 2
-    const request = new XMLHttpRequest();
-    const url='https://api.xingxingmobility.com/api-xingxing/v1/scootersforapp?latitude='+lat+'&longitude='+long+'&zoom=15';
-    const bearer = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImF1dGhJZCI6ImhvbmV5YmVlcyIsInVzZXJJZCI6ImhvbmV5YmVlcyIsInJvbGVzIjpbImFwcHhpbmd4aW5nIl19LCJpYXQiOjE1NTUzMzQ3MjMsImV4cCI6ODY1NTU1MzM0NzIzfQ.br5PT0s_vkFFs24Dxv0acPeQizg_TpXtkdEaWRgkSMw"
-    request.open("GET", url);
-    request.setRequestHeader("Authorization", bearer);  
-    request.send();
-    request.onreadystatechange = function() {
-        if (request.readyState == XMLHttpRequest.DONE) {
-            var json = null;
-            try {json = JSON.parse(request.responseText);} catch {
-                console.log(request.responseText)
-            }
-            for (var scooter in json.scooter) {
-                if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
-                    console.log(scooter)
-                    updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
-                }
-            }
-        }
-    }
-}
-*/
 
 function getXingxing(lat,long){
     //ID 2
@@ -126,27 +132,6 @@ function getXingxing(lat,long){
         }})
 }
 
-
-
-function getGbility(lat, long){
-    //왜 안되지 뭐 까먹었나
-    const request = new XMLHttpRequest();
-    const url='https://app.gbike-api.com/api/index.php?route=location/location/getBicycleLocationByBound&version=80&fromApi=ios';
-    request.open("POST", url);
-    request.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
-    let urlEncodedData = "",
-      urlEncodedDataPairs = [];
-    urlEncodedDataPairs.push( encodeURIComponent( "min_lat" ) + '=' + encodeURIComponent( (lat-0.01) ) );
-    urlEncodedDataPairs.push( encodeURIComponent( "min_lng" ) + '=' + encodeURIComponent( (long-0.01) ) );
-    urlEncodedDataPairs.push( encodeURIComponent( "max_lat" ) + '=' + encodeURIComponent( (lat+0.01) ) );
-    urlEncodedDataPairs.push( encodeURIComponent( "max_lng" ) + '=' + encodeURIComponent( (long+0.01) ) );
-    urlEncodedData = urlEncodedDataPairs.join( '&' ).replace( /%20/g, '+' );
-    request.send(urlEncodedData);
-    request.onreadystatechange = (e) => {
-        console.log(request.responseText)
-    }
-}
-
 function getGogossing(lat,long){
     //12 87 63 165가 뭔뜻일까
     const request = new XMLHttpRequest();
@@ -161,10 +146,4 @@ function getGogossing(lat,long){
     request.onreadystatechange = (e) => {
         console.log(request.responseText)
     }
-}
-
-function updateMarker(vehicle){
-    //DELETE MARKER
-    //ADD ACCORDING TO LOCATION
-    makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%")
 }
