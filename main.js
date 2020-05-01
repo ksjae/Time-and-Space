@@ -49,9 +49,10 @@ function init() {
 
 function searchPlace(keyword) {
     var places = null;
-    ps.keywordSearch(keyword, function (data, status, pagination) {
-        console.log(data)
-    });
+    $('#search-result').text('I am getting refreshed every 3 seconds..! Random Number ==> ');
+    //ps.keywordSearch(keyword, function (data, status, pagination) {
+    //    console.log(data)
+    //});
     
     return places
 }
