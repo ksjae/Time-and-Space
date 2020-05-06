@@ -73,21 +73,34 @@ var searchResultBox = {
     },
     update: function () {
         //풀네임, 주소, category_group_name 출력
-        $("#search-result p").remove();
-        this.results.forEach(result => {
-            $("#search-result").append("<p>" + result.place_name + "</p>");
+        $("#search-result").empty();
+        if (this.results.length > 6) {
+            $("#search-result").css('height', 240);
+            $("#search-result").css('top', 250);
+        } else {
+            $("#search-result").css('height', this.results.length * 38);
+            $("#search-result").css('top', this.results.length * 40 + 20);
+        }
+        this.results.slice(0,6).forEach(result => {
+            $("#search-result").append("<p class='result-item' onclick='makeMarker(new kakao.maps.LatLng(result.x, result.y), result.place_name)'>" + result.place_name + "<span>" + result.address_name + "</span></p>");
         });
     },
     results: []
 }
 
 function searchPlace(keyword) {
+    if (keyword === "") {
+        return
+    }
+    $("#search-result").empty();
     ps.keywordSearch(keyword, function (data, status, pagination) {
-        console.log(data);
+        //console.log(data);
+        searchResultBox.results = [];
         data.forEach(item => {
-            searchResultBox.results.push(item)
+            searchResultBox.results.push(item);
             console.log(item);
         });
+        $("#search-result").empty();
         searchResultBox.update();
     });
     //return places
