@@ -114,19 +114,33 @@ function searchPlace(keyword) {
 var vehicleMarkerArea = 0.04;
 function getKickGoing(lat, long) {
     //ID 1
-    const Http = new XMLHttpRequest();
     const url = 'https://api.kickgoing.io/v2/main?latitude=' + lat + '&longitude=' + long + '&version=1.2.2';
-    Http.open("GET", url);
-    Http.send();
-
-    Http.onreadystatechange = (e) => {
-        console.log(Http.responseText)
-    }
+    fetch(url, {
+        mode: 'no-cors', // no-cors, *cors, same-origin
+        headers: {
+            'Authorization': bearer
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    }).then((response) => {
+        if (!response.ok) {
+            console.log("Failed to get Xingxing data :(");
+        }
+        response.json(); // parses JSON response into native JavaScript objects
+        try { json = response.json(); } catch {
+            console.log(response.responseText)
+        }
+        for (var scooter in json.scooter) {
+            if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
+                console.log(scooter)
+                updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
+            }
+        }
+    })
 }
 
 function getXingxing(lat, long) {
     //ID 2
-    const request = new XMLHttpRequest();
     const url = 'https://api.xingxingmobility.com/api-xingxing/v1/scootersforapp?latitude=' + lat + '&longitude=' + long + '&zoom=15';
     const bearer = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImF1dGhJZCI6ImhvbmV5YmVlcyIsInVzZXJJZCI6ImhvbmV5YmVlcyIsInJvbGVzIjpbImFwcHhpbmd4aW5nIl19LCJpYXQiOjE1NTUzMzQ3MjMsImV4cCI6ODY1NTU1MzM0NzIzfQ.br5PT0s_vkFFs24Dxv0acPeQizg_TpXtkdEaWRgkSMw"
     var myHeaders = new Headers();
@@ -144,7 +158,7 @@ function getXingxing(lat, long) {
         }
         response.json(); // parses JSON response into native JavaScript objects
         try { json = response.json(); } catch {
-            console.log(request.responseText)
+            console.log(response.responseText)
         }
         for (var scooter in json.scooter) {
             if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
@@ -157,18 +171,36 @@ function getXingxing(lat, long) {
 
 function getGogossing(lat, long) {
     //12 87 63 165가 뭔뜻일까
-    const request = new XMLHttpRequest();
     const url = "idk";
-    request.open("GET", url);
     let urlEncodedData = "", urlEncodedDataPairs = [];
     urlEncodedDataPairs.push(encodeURIComponent("latSW") + '=' + encodeURIComponent(12));
     urlEncodedDataPairs.push(encodeURIComponent("lngSW") + '=' + encodeURIComponent(87));
     urlEncodedDataPairs.push(encodeURIComponent("latNE") + '=' + encodeURIComponent(63));
     urlEncodedDataPairs.push(encodeURIComponent("lngNE") + '=' + encodeURIComponent(165));
-    request.send();
-    request.onreadystatechange = (e) => {
-        console.log(request.responseText)
-    }
+    fetch(url, {
+        mode: 'no-cors', // no-cors, *cors, same-origin
+        headers: {
+            'Authorization': bearer
+        },
+        redirect: 'follow', // manual, *follow, error
+        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        method: 'post',
+        body: urlEncodedDataPairs
+    }).then((response) => {
+        if (!response.ok) {
+            console.log("Failed to get Xingxing data :(");
+        }
+        response.json(); // parses JSON response into native JavaScript objects
+        try { json = response.json(); } catch {
+            console.log(response.responseText)
+        }
+        for (var scooter in json.scooter) {
+            if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
+                console.log(scooter)
+                updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
+            }
+        }
+    })
 }
 
 
