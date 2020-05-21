@@ -43,9 +43,9 @@ function updateMarker(vehicle) {
 
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
+        navigator.geolocation.getCurrentPosition(registerPosition);
     } else {
-        alert("Geolocation is not supported by this browser.");
+        alert("위치 서비스를 이용할 수 없습니다.");
     }
 }
 var userLongitude = null;
@@ -53,6 +53,10 @@ var userLatitude = null;
 function registerPosition(position) {
     userLongitude = position.coords.longitude;
     userLatitude = position.coords.latitude;
+}
+function manualPosSet(){
+    userLongitude = $("#search-result").empty();
+    userLatitude = $("#search-result").empty();
 }
 
 function init() {
@@ -106,108 +110,17 @@ function searchPlace(keyword) {
     //return places
 }
 
+function markVehicles(location) {
+    getKickGoing(location);
+    getXingxing(location);
+    getGogossing(location);
 
-
-
-
-
-var vehicleMarkerArea = 0.04;
-function getKickGoing(lat, long) {
-    //ID 1
-    const url = 'https://api.kickgoing.io/v2/main?latitude=' + lat + '&longitude=' + long + '&version=1.2.2';
-    fetch(url, {
-        mode: 'no-cors', // no-cors, *cors, same-origin
-        headers: {
-            'Authorization': bearer
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    }).then((response) => {
-        if (!response.ok) {
-            console.log("Failed to get Xingxing data :(");
-        }
-        response.json(); // parses JSON response into native JavaScript objects
-        try { json = response.json(); } catch {
-            console.log(response.responseText)
-        }
-        for (var scooter in json.scooter) {
-            if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
-                console.log(scooter)
-                updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
-            }
-        }
-    })
 }
 
-function getXingxing(lat, long) {
-    //ID 2
-    const url = 'https://api.xingxingmobility.com/api-xingxing/v1/scootersforapp?latitude=' + lat + '&longitude=' + long + '&zoom=15';
-    const bearer = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImF1dGhJZCI6ImhvbmV5YmVlcyIsInVzZXJJZCI6ImhvbmV5YmVlcyIsInJvbGVzIjpbImFwcHhpbmd4aW5nIl19LCJpYXQiOjE1NTUzMzQ3MjMsImV4cCI6ODY1NTU1MzM0NzIzfQ.br5PT0s_vkFFs24Dxv0acPeQizg_TpXtkdEaWRgkSMw"
-    var myHeaders = new Headers();
-    myHeaders.append('Authorization', bearer);
-    fetch(url, {
-        mode: 'no-cors', // no-cors, *cors, same-origin
-        headers: {
-            'Authorization': bearer
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    }).then((response) => {
-        if (!response.ok) {
-            console.log("Failed to get Xingxing data :(");
-        }
-        response.json(); // parses JSON response into native JavaScript objects
-        try { json = response.json(); } catch {
-            console.log(response.responseText)
-        }
-        for (var scooter in json.scooter) {
-            if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
-                console.log(scooter)
-                updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
-            }
-        }
-    })
-}
-
-function getGogossing(lat, long) {
-    //12 87 63 165가 뭔뜻일까
-    const url = "idk";
-    let urlEncodedData = "", urlEncodedDataPairs = [];
-    urlEncodedDataPairs.push(encodeURIComponent("latSW") + '=' + encodeURIComponent(12));
-    urlEncodedDataPairs.push(encodeURIComponent("lngSW") + '=' + encodeURIComponent(87));
-    urlEncodedDataPairs.push(encodeURIComponent("latNE") + '=' + encodeURIComponent(63));
-    urlEncodedDataPairs.push(encodeURIComponent("lngNE") + '=' + encodeURIComponent(165));
-    fetch(url, {
-        mode: 'no-cors', // no-cors, *cors, same-origin
-        headers: {
-            'Authorization': bearer
-        },
-        redirect: 'follow', // manual, *follow, error
-        referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        method: 'post',
-        body: urlEncodedDataPairs
-    }).then((response) => {
-        if (!response.ok) {
-            console.log("Failed to get Xingxing data :(");
-        }
-        response.json(); // parses JSON response into native JavaScript objects
-        try { json = response.json(); } catch {
-            console.log(response.responseText)
-        }
-        for (var scooter in json.scooter) {
-            if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
-                console.log(scooter)
-                updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
-            }
-        }
-    })
-}
-
-
-function SaveUserConfig(name, str) { //cookieName=string;
+function saveUserConfig(name, str) { //cookieName=string;
     document.cookie = name+ "=" + str + "; expires=Thu, 18 Dec 2025 12:00:00 UTC";
 }
-function ReadUserConfig(name) {
+function readUserConfig(name) {
     name += "=";
     var decodedCookie = decodeURIComponent(document.cookie);
     var ca = decodedCookie.split(';');
@@ -221,4 +134,39 @@ function ReadUserConfig(name) {
         }
     }
     return false;
+}
+var encryptedConfig = {
+    read: function (name) {
+
+    },
+    add: function (name, str) {
+
+    },
+    remove: function (name, str) {
+        
+    }
+}
+
+var myLocations = {
+    list: function () {
+        $("#search-result").show();
+    },
+    add: function () {
+        $("#search-result").hide();
+    },
+    update: function () {
+        //풀네임, 주소, category_group_name 출력
+        $("#search-result").empty();
+        if (this.results.length > 6) {
+            $("#search-result").css('height', 240);
+            $("#search-result").css('top', 250);
+        } else {
+            $("#search-result").css('height', this.results.length * 38);
+            $("#search-result").css('top', this.results.length * 40 + 20);
+        }
+        this.results.slice(0,6).forEach(result => {
+            $("#search-result").append("<p class='result-item' onclick='makeMarker(new kakao.maps.LatLng(result.x, result.y), result.place_name)'>" + result.place_name + "<span>" + result.address_name + "</span></p>");
+        });
+    },
+    results: []
 }
