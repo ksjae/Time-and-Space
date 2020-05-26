@@ -136,11 +136,15 @@ function readUserConfig(name) {
     return false;
 }
 var encryptedConfig = {
-    read: function (name) {
-
+    read: function (name, password) {
+        var cookie = readUserConfig(name+"_enc");
+        if (cookie == false) {
+            return false; //Assume cookie corrupted.
+        }
+        // DECRYPT
     },
-    add: function (name, str) {
-
+    add: function (name, str, password) {
+        var cookieContent = this.read(name, password);
     },
     remove: function (name, str) {
         
