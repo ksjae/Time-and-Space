@@ -6,13 +6,7 @@ class Vehicle {
         self.serviceType = serviceType;
     }
 }
-class Location {
-    constructor(lat, long, name) {
-        self.lat = lat;
-        self.long = long;
-        self.name = name;
-    }
-}
+
 
 
 var ps = null;
@@ -40,6 +34,27 @@ function updateMarker(vehicle) {
     makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%")
 }
 
+function drawLine(linePath){
+    // 지도에 표시할 선을 생성합니다
+    var polyline = new kakao.maps.Polyline({
+        path: linePath, // 선을 구성하는 좌표배열 입니다
+        strokeWeight: 5, // 선의 두께 입니다
+        strokeColor: '#FFAE00', // 선의 색깔입니다
+        strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+        strokeStyle: 'solid' // 선의 스타일입니다
+    });
+
+    // 지도에 선을 표시합니다 
+    polyline.setMap(map); 
+}
+function lineTest(){
+    var linePath = [
+        new kakao.maps.LatLng(37.3817767,126.6304981),
+        new kakao.maps.LatLng(37.384066, 126.626311)
+    ];
+    drawLine(linePath);
+}
+
 
 function getLocation() {
     if (navigator.geolocation) {
@@ -58,7 +73,8 @@ function manualPosSet(){
     userLongitude = $("#search-result").empty();
     userLatitude = $("#search-result").empty();
 }
-
+var kickboard = null;
+var mylocation = null;;
 function init() {
     map = new kakao.maps.Map(document.getElementById('map'), {
         center: new kakao.maps.LatLng(userLatitude, userLongitude),
@@ -66,6 +82,9 @@ function init() {
     });
     makeMarker(new kakao.maps.LatLng(userLatitude, userLongitude), 0);
     ps = new kakao.maps.services.Places();
+    kickboard = new Kickboard();
+    mylocation = {lat: 37.49753128060163, long:127.02815273412143};
+    console.log(mylocation);
 }
 
 var searchResultBox = {

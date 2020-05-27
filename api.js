@@ -1,19 +1,20 @@
+const vehicleMarkerArea = 0.04;
 class Kickboard {
-    vehicleMarkerArea = 0.04;
     kickgoing(location) {
         //ID 1
         const url = 'https://api.kickgoing.io/v2/main?latitude=' + location.lat + '&longitude=' + location.long + '&version=1.2.2';
+        console.log(url);
         fetch(url, {
             mode: 'no-cors', // no-cors, *cors, same-origin
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         }).then((response) => {
             if (!response.ok) {
-                console.log("Failed to get Xingxing data :(");
+                console.log("Failed to get Kickgoing data :(");
             }
-            response.json(); // parses JSON response into native JavaScript objects
             try { json = response.json(); } catch {
-                console.log(response.responseText)
+                console.log("제이슨 페일");
+                console.log(response.responseText);
             }
             for (var scooter in json.scooter) {
                 if (Math.abs(scooter.deviceStatus.location.coordinates[0] - location.long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - location.lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
@@ -61,7 +62,7 @@ class Kickboard {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         }).then((response) => {
             if (!response.ok) {
-                console.log("Failed to get Xingxing data :(");
+                console.log("Failed to get gogossing data :(");
             }
             response.json(); // parses JSON response into native JavaScript objects
             try { json = response.json(); } catch {
@@ -84,7 +85,7 @@ class Kickboard {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         }).then((response) => {
             if (!response.ok) {
-                console.log("Failed to get Xingxing data :(");
+                console.log("Failed to get beam data :(");
             }
             response.json(); // parses JSON response into native JavaScript objects
             try { json = response.json(); } catch {
@@ -107,7 +108,7 @@ class Kickboard {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         }).then((response) => {
             if (!response.ok) {
-                console.log("Failed to get Xingxing data :(");
+                console.log("Failed to get flowerroad data :(");
             }
             response.json(); // parses JSON response into native JavaScript objects
             try { json = response.json(); } catch {
@@ -135,7 +136,7 @@ class Bike {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         }).then((response) => {
             if (!response.ok) {
-                console.log("Failed to get Xingxing data :(");
+                console.log("Failed to get eleccle data :(");
             }
             response.json(); // parses JSON response into native JavaScript objects
             try { json = response.json(); } catch {
@@ -160,7 +161,7 @@ class Bike {
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         }).then((response) => {
             if (!response.ok) {
-                console.log("Failed to get Xingxing data :(");
+                console.log("Failed to get cookie-bike data :(");
             }
             response.json(); // parses JSON response into native JavaScript objects
             try { json = response.json(); } catch {
@@ -176,8 +177,8 @@ class Bike {
     }
 }
 
+const apiKey = "XqOr1kp1Xt4UsZla7i7qPghmncHHLVtYwUlDdKPYmrxKVi1%2Fg9HUgGNMZuGzB3Opx0YGj1TEphvsV06Pqob13A%3D%3D";
 class Transit {
-    apiKey = "XqOr1kp1Xt4UsZla7i7qPghmncHHLVtYwUlDdKPYmrxKVi1%2Fg9HUgGNMZuGzB3Opx0YGj1TEphvsV06Pqob13A%3D%3D"
     subwayPath(start, end) {
         const url = "http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoBySubway?ServiceKey=" + apiKey + "&startX=" + start.lat + "&startY=" + start.long + "&endX=" + end.lat + "&endY=" + end.long;
         fetch(url + queryParams, {
