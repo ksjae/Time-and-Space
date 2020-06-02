@@ -11,29 +11,56 @@ function Vehicle (lat, long, battery, serviceType) {
 
 
 var ps = null;
-function makeMarker(position, title) {
+var linePath = null;
+function makeMarker(position, title, id) {
 
-    let imageSize = new kakao.maps.Size(24, 35);
-    let imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+    var imageSize = new kakao.maps.Size(32, 32);
+    if (id === 0 || id > 5) imageSize = new kakao.maps.Size(23, 35);
 
-    // 마커 이미지를 생성합니다    
-    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+    let imageSrc = 
+    [   "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+        "https://localhost/img/1.png",
+        "https://localhost/img/2.png",
+        "https://localhost/img/3.png",
+        "https://localhost/img/4.png",
+        "https://localhost/img/5.png"    
+    ];
+
+    // 마커 이미지를 생성합니다 
+    if (id > 5) id=0;
+    var markerImage = new kakao.maps.MarkerImage(imageSrc[id], imageSize);
 
     // 마커를 생성합니다
     var marker = new kakao.maps.Marker({
         map: map, // 마커를 표시할 지도
         position: position, // 마커를 표시할 위치
         title: title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-        image: markerImage // 마커 이미지 
+        image: markerImage, // 마커 이미지 
+        clickable: true //마커가 대싴 클릭되게.
     });
 
+    // 인포윈도우를 생성합니다
+    linePath = [
+        ,
+        new kakao.maps.LatLng(37.384066, 126.626311)
+    ];
+    var infowindow = new kakao.maps.InfoWindow({
+    content : '<button onclick="drawLine(linePath)' + position.getLat() + position.getLng() + '\');">길찾기</button>',
+    removable : true
+    });
+
+    // 마커에 클릭이벤트를 등록합니다
+    kakao.maps.event.addListener(marker, 'click', function() {
+    // 마커 위에 인포윈도우를 표시합니다
+    infowindow.open(map, marker);  
+    });
     return marker;
 }
 function updateMarker(vehicle) {
     //DELETE MARKER
     //ADD ACCORDING TO LOCATION
     console.log(vehicle);
-    makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%")
+    makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%", vehicle.serviceType);
 }
 
 function drawLine(linePath){
@@ -82,7 +109,7 @@ function init() {
         center: new kakao.maps.LatLng(userLatitude, userLongitude),
         zoom: 15
     });
-    makeMarker(new kakao.maps.LatLng(userLatitude, userLongitude), 0);
+    makeMarker(new kakao.maps.LatLng(userLatitude, userLongitude), 0, 0);
     ps = new kakao.maps.services.Places();
     kickboard = new Kickboard();
     mylocation = {lat: 37.49753128060163, long:127.02815273412143};
@@ -107,7 +134,7 @@ var searchResultBox = {
             $("#search-result").css('top', this.results.length * 40 + 20);
         }
         this.results.slice(0,6).forEach(result => {
-            $("#search-result").append("<p class='result-item' onclick='makeMarker(new kakao.maps.LatLng(result.x, result.y), result.place_name)'>" + result.place_name + "<span>" + result.address_name + "</span></p>");
+            $("#search-result").append("<p class='result-item' onclick='makeMarker(new kakao.maps.LatLng(result.x, result.y, 0), result.place_name)'>" + result.place_name + "<span>" + result.address_name + "</span></p>");
         });
     },
     results: []
@@ -129,10 +156,6 @@ function searchPlace(keyword) {
         searchResultBox.update();
     });
     //return places
-}
-
-function drawToVehicle(location) {
-    
 }
 
 function refresh(location) {
