@@ -12,46 +12,51 @@ class Kickboard {
             if (!response.ok) {
                 console.log("Failed to get Kickgoing data :(");
             }
-            try { json = response.json(); } catch {
-                console.log("제이슨 페일");
-                console.log(response.responseText);
-            }
-            for (var scooter in json.scooter) {
-                if (Math.abs(scooter.deviceStatus.location.coordinates[0] - location.long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - location.lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
-                    console.log(scooter)
-                    updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
+            response.json().then((json) => {
+                for (var scooter in json.scooter) {
+                    if (Math.abs(scooter.deviceStatus.location.coordinates[0] - location.long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - location.lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
+                        console.log(scooter)
+                        updateMarker(Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
+                    }
                 }
-            }
-        })
+            })
+        }).catch((err) => {
+            console.log('Error: ${err}');
+        });
     }
     xingxing(location) {
         //ID 2
-        const url = 'https://api.xingxingmobility.com/api-xingxing/v1/scootersforapp?latitude=' + location.lat + '&longitude=' + location.long + '&zoom=15';
+        //const url = 'https://api.xingxingmobility.com/api-xingxing/v1/scootersforapp?latitude=' + location.lat + '&longitude=' + location.long + '&zoom=15';
+        const url = 'https://localhost/xing.txt' //fetch에서 Authorization header가 잘 안됨.
         const bearer = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImF1dGhJZCI6ImhvbmV5YmVlcyIsInVzZXJJZCI6ImhvbmV5YmVlcyIsInJvbGVzIjpbImFwcHhpbmd4aW5nIl19LCJpYXQiOjE1NTUzMzQ3MjMsImV4cCI6ODY1NTU1MzM0NzIzfQ.br5PT0s_vkFFs24Dxv0acPeQizg_TpXtkdEaWRgkSMw"
         var myHeaders = new Headers();
         myHeaders.append('Authorization', bearer);
         fetch(url, {
-            mode: 'no-cors', // no-cors, *cors, same-origin
-            headers: {
-                'Authorization': bearer
-            },
+            //mode: 'no-cors', // no-cors, *cors, same-origin
+            headers: new Headers({
+                'Authorization': bearer,
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }),
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
         }).then((response) => {
             if (!response.ok) {
-                console.log("Failed to get Xingxing data :(");
+                console.log("Failed to get xingxing data :(");
             }
-            response.json(); // parses JSON response into native JavaScript objects
-            try { json = response.json(); } catch {
-                console.log(response.responseText)
-            }
-            for (var scooter in json.scooter) {
-                if (Math.abs(scooter.deviceStatus.location.coordinates[0] - long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - lat) < vehicleMarkerArea && scooter.deviceStatus.enable) {
-                    console.log(scooter)
+            return response.json()
+        }).then((json) => {
+            console.log(json.scooters);
+            json.scooters.forEach(scooter => {
+                //console.log(scooter.deviceStatus.location.coordinates);
+                if (Math.abs(scooter.deviceStatus.location.coordinates[0] - location.long) < vehicleMarkerArea && Math.abs(scooter.deviceStatus.location.coordinates[1] - location.lat) < vehicleMarkerArea && scooter.nickname === "") {
+                    //console.log(scooter);
                     updateMarker(new Vehicle(scooter.deviceStatus.location.coordinates[1], scooter.deviceStatus.location.coordinates[0], scooter.deviceStatus.battery, 2))
                 }
-            }
+            });
         })
+        //.catch((err) => {
+        //    console.log('Error: '+err);
+        //});
     }
     gogossing(location) {
         //ID 3

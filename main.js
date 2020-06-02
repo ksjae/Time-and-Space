@@ -1,10 +1,11 @@
-class Vehicle {
-    constructor(lat, long, battery, serviceType) {
-        self.batt = battery;
-        self.lat = lat;
-        self.long = long;
-        self.serviceType = serviceType;
-    }
+function Vehicle (lat, long, battery, serviceType) {
+    var thing = {
+        batt: battery,
+        lat: lat,
+        long: long,
+        serviceType: serviceType
+    };
+    return thing;
 }
 
 
@@ -31,6 +32,7 @@ function makeMarker(position, title) {
 function updateMarker(vehicle) {
     //DELETE MARKER
     //ADD ACCORDING TO LOCATION
+    console.log(vehicle);
     makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%")
 }
 
@@ -113,7 +115,7 @@ var searchResultBox = {
 
 function searchPlace(keyword) {
     if (keyword === "") {
-        return
+        return;
     }
     $("#search-result").empty();
     ps.keywordSearch(keyword, function (data, status, pagination) {
@@ -129,11 +131,12 @@ function searchPlace(keyword) {
     //return places
 }
 
-function markVehicles(location) {
-    getKickGoing(location);
-    getXingxing(location);
-    getGogossing(location);
+function drawToVehicle(location) {
+    
+}
 
+function refresh(location) {
+    init();
 }
 
 function saveUserConfig(name, str) { //cookieName=string;
