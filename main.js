@@ -40,12 +40,8 @@ function makeMarker(position, title, id) {
     });
 
     // 인포윈도우를 생성합니다
-    linePath = [
-        ,
-        new kakao.maps.LatLng(37.384066, 126.626311)
-    ];
     var infowindow = new kakao.maps.InfoWindow({
-    content : '<button onclick="drawLine(linePath)' + position.getLat() + position.getLng() + '\');">길찾기</button>',
+    content : '<button onclick="drawLine([getLocation(), new kakao.maps.LatLng(' + position.getLat() + ',' + position.getLng() + ')]);">길찾기</button>',
     removable : true
     });
 
@@ -63,12 +59,15 @@ function updateMarker(vehicle) {
     makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%", vehicle.serviceType);
 }
 
-function drawLine(linePath){
+function drawLine(linePath, color){
+    if (color === undefined) {
+        color = '#FFAE00';
+    }
     // 지도에 표시할 선을 생성합니다
     var polyline = new kakao.maps.Polyline({
         path: linePath, // 선을 구성하는 좌표배열 입니다
         strokeWeight: 5, // 선의 두께 입니다
-        strokeColor: '#FFAE00', // 선의 색깔입니다
+        strokeColor: color, // 선의 색깔입니다
         strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
         strokeStyle: 'solid' // 선의 스타일입니다
     });
@@ -89,8 +88,10 @@ function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(registerPosition);
     } else {
-        alert("위치 서비스를 이용할 수 없습니다.");
+        alert("위치 서비스를 이용할 수 없습니다. 정상적인 이용이 불가능할 것입니다.");
+        return new kakao.maps.LatLng(37.384066, 126.626311);
     }
+    return new kakao.maps.LatLng(userLatitude, userLongitude);
 }
 var userLongitude = null;
 var userLatitude = null;
@@ -107,13 +108,14 @@ var mylocation = null;;
 function init() {
     map = new kakao.maps.Map(document.getElementById('map'), {
         center: new kakao.maps.LatLng(userLatitude, userLongitude),
-        zoom: 15
+        zoom: 17
     });
     makeMarker(new kakao.maps.LatLng(userLatitude, userLongitude), 0, 0);
     ps = new kakao.maps.services.Places();
     kickboard = new Kickboard();
-    mylocation = {lat: 37.49753128060163, long:127.02815273412143};
-    console.log(mylocation);
+    mylocation = {lat: userLatitude, long: userLongitude};
+    //mylocation = {lat: 37.49753128060163, long:127.02815273412143};
+    //console.log(mylocation);
 }
 
 var searchResultBox = {
