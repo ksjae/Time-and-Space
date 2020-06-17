@@ -7,6 +7,22 @@ function Vehicle (lat, long, battery, serviceType) {
     };
     return thing;
 }
+function Location (lat, long) {
+    var loc = {
+        lat: lat,
+        long: long
+    };
+    return loc;
+}
+function PathVector (from, to, method, eta) {
+    var v = {
+        from: from,
+        to: to,
+        method: method,
+        eta: eta
+    };
+    return v;
+}
 
 
 
@@ -113,7 +129,11 @@ function init() {
     makeMarker(new kakao.maps.LatLng(userLatitude, userLongitude), 0, 0);
     ps = new kakao.maps.services.Places();
     kickboard = new Kickboard();
+    bike = new Bike();
     mylocation = {lat: userLatitude, long: userLongitude};
+
+    if (!window.DOMParser) alert("경고 : 옛날 브라우저(IE)에서는 대중교통 경로검색이 불가능합니다");
+    transit = new Transit();
     //mylocation = {lat: 37.49753128060163, long:127.02815273412143};
     //console.log(mylocation);
 }
@@ -158,6 +178,10 @@ function searchPlace(keyword) {
         searchResultBox.update();
     });
     //return places
+}
+
+function searchPath() {
+
 }
 
 function refresh(location) {
