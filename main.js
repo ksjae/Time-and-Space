@@ -71,7 +71,7 @@ function makeMarker(position, title, id) {
 function updateMarker(vehicle) {
     //DELETE MARKER
     //ADD ACCORDING TO LOCATION
-    console.log(vehicle);
+    //console.log(vehicle);
     makeMarker(new kakao.maps.LatLng(vehicle.lat, vehicle.long), "배터리 : " + vehicle.battery + "%", vehicle.serviceType);
 }
 
