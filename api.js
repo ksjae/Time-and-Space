@@ -67,13 +67,14 @@ class Kickboard {
             //response.json(); 두번 쓰면 혼난다
             return response.json()
         }).then((json) => {
-            for (var scooter in json.payload.moblist) {
-                if (Math.abs(scooter.LON - long) < vehicleMarkerArea && Math.abs(scooter.LAT - location.lat) < vehicleMarkerArea && scooter.CHECK_REASON === "") {
-                    //console.log(scooter)
-                    updateMarker(new Vehicle(scooter.LON, scooter.LAT, scooter.BATTERY_PER, 3))
+            //console.log(json);
+            json.payload.mobList.forEach(scooter => {
+                if (Math.abs(scooter.LON - location.long) < vehicleMarkerArea && Math.abs(scooter.LAT - location.lat) < vehicleMarkerArea && scooter.CHECK_REASON === "") {
+                    //console.log(scooter);
+                    updateMarker(new Vehicle(scooter.LAT, scooter.LON, scooter.BATTERY_PER, 3));
                 }
-            }
-        })
+            })
+        });
     }
     beam(location) { //경로에러 자주 뜸
         //ID 4
@@ -110,10 +111,9 @@ class Kickboard {
             return response.json()
         }).then((json) => {
             json.data.forEach(scooter => {
-                //console.log(scooter.deviceStatus.location.coordinates);
                 if (Math.abs(scooter.lon - location.long) < vehicleMarkerArea && Math.abs(scooter.lat - location.lat) < vehicleMarkerArea && scooter.state === "available") {
-                    console.log(scooter);
-                    updateMarker(new Vehicle(scooter.lon, scooter.lat, scooter.battery, 5))
+                    //console.log(scooter);
+                    updateMarker(new Vehicle(scooter.lat, scooter.lon, scooter.battery, 5));
                 }
             });
         })
@@ -122,7 +122,7 @@ class Kickboard {
 
 class Bike {
     elecle (location) { //ID 6
-        const url = 'https://api.elecle.bike/v1/bike?position=' + location.lat + ',' + location.long + '&radius=50&bike_type=UNIVERSE';
+        const url = 'https://api.elecle.bike/v1/bike?position=' + location.long + ',' + location.lat + '&radius=50&bike_type=UNIVERSE';
         const bearer = 'bearer RgVZfFQKm6R60lIjH9KFL4N3jSmdQF';
         fetch(url, {
             headers: {
@@ -133,16 +133,18 @@ class Bike {
             if (!response.ok) {
                 console.log("Failed to get elecle data :(");
             }
-            //response.json(); // parses JSON response into native JavaScript objects
-            return response.json()
+            //console.log(response.text());
+            return response.json();
         }).then((json) => {
-            for (var bike in json) {
-                if (Math.abs(bike.location[0] - long) < vehicleMarkerArea && Math.abs(bike.location[1] - location.lat) < vehicleMarkerArea) {
-                    console.log(scooter)
-                    updateMarker(new Vehicle(bike.location[0], bike.location[1], bike.leftover, 6))
+            console.log(json);
+            json.forEach(bike => {
+                //console.log(bike);
+                if (Math.abs(bike.location[0] - location.long) < vehicleMarkerArea && Math.abs(bike.location[1] - location.lat) < vehicleMarkerArea) {
+                    console.log(bike);
+                    updateMarker(new Vehicle(bike.location[1], bike.location[0], bike.leftover, 6))
                 }
-            }
-        })
+            });
+        });
     }
     cookie (location) { //발암 500KB/request
         const url = 'https://api.cookiebike.co.kr/app/service/bikes/kml?lang=ko&lat=' + location.lat + '&lon=' + location.long + '&filter=%5B%5D&minLon=0&minLat=0&maxLon=99999999&maxLat=9999999&bbox=14073744.877308,4428101.0898232,14145404.591318,4551737.9830572';
