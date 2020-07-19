@@ -1,11 +1,15 @@
-const vehicleMarkerArea = 0.004;
+const vehicleMarkerArea = 0.01;
+var dbg = "";
 class Kickboard {
     kickgoing(location) {
         //ID 1
         const url = 'https://api.kickgoing.io/v2/kickscooters/ready/list?lat=' + location.lat + '&lng=' + location.long;
         console.log(url);
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             redirect: 'follow', // manual, *follow, error
+            headers: new Headers({
+                'request-url' : url
+            })
         }).then((response) => {
             if (!response.ok) {
                 console.log("Failed to get kickgoing data :(");
@@ -29,12 +33,13 @@ class Kickboard {
         const bearer = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImF1dGhJZCI6ImhvbmV5YmVlcyIsInVzZXJJZCI6ImhvbmV5YmVlcyIsInJvbGVzIjpbImFwcHhpbmd4aW5nIl19LCJpYXQiOjE1NTUzMzQ3MjMsImV4cCI6ODY1NTU1MzM0NzIzfQ.br5PT0s_vkFFs24Dxv0acPeQizg_TpXtkdEaWRgkSMw"
         var myHeaders = new Headers();
         myHeaders.append('Authorization', bearer);
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             //mode: 'no-cors', // no-cors, *cors, same-origin
             credentials: 'include',
             headers: new Headers({
                 'Authorization': bearer,
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'request-url' : url
             })
         }).then((response) => {
             if (!response.ok) {
@@ -58,8 +63,11 @@ class Kickboard {
     gogossing(location) {
         //ID 3
         const url = "https://api.gogo-ssing.com/ss/api/mob/search.do?latSW=" + (location.lat-vehicleMarkerArea) + "&lngSW=" + (location.long-vehicleMarkerArea) + "&latNE=" + (location.lat+vehicleMarkerArea) + "&lngNE=" + (location.long+vehicleMarkerArea) + "&type=SCOOTER";
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             redirect: 'follow', // manual, *follow, error
+            headers: new Headers({
+                'request-url' : url
+            })
         }).then((response) => {
             if (!response.ok) {
                 console.log("Failed to get gogossing data :(");
@@ -79,8 +87,11 @@ class Kickboard {
     beam(location) { //경로에러 자주 뜸
         //ID 4
         const url = 'https://gateway.ridebeam.com/api/vehicles/scooter/latlong?latitude=' + location.lat + '&longitude=' + location.long + '&version=1.2.2';
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             redirect: 'follow', // manual, *follow, error
+            headers: new Headers({
+                'request-url' : url
+            })
         }).then((response) => {
             if (!response.ok) {
                 console.log("Failed to get beam data :(");
@@ -99,10 +110,11 @@ class Kickboard {
     flowerroad(location) { //NEEDS TO FETCH AUTH
         //ID 5
         const url = 'https://api.flowerroad.ai/scooter/info/user/lock?lat=' + location.lat + '&lon=' + location.long + '&distance=1';
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             credentials: 'include',
             headers: new Headers({
-                'x-api-key' : 'hFT9RfoQHe1SyTG2siwRmaIpXWhWNH6v9R86yonP'
+                'x-api-key' : 'hFT9RfoQHe1SyTG2siwRmaIpXWhWNH6v9R86yonP',
+                'request-url' : url
             })
         }).then((response) => {
             if (!response.ok) {
@@ -118,15 +130,38 @@ class Kickboard {
             });
         })
     }
+    mate(location) { 
+        //ID 7
+        const url = 'https://api.matemobility.com/api/search/vehicle/geonear?center=' + location.lat + ',' + location.long + '&end=' +(location.lat-vehicleMarkerArea) + ',' + (location.long-vehicleMarkerArea);
+        fetch("https://tagopa.ksjit.com/s/", {
+            credentials: 'include',
+            headers: new Headers({
+                'request-url' : url
+            })
+        }).then((response) => {
+            if (!response.ok) {
+                console.log("Failed to get mate-marcane data :(");
+            }
+            return response.json()
+        }).then((json) => {
+            console.log(json);
+            json.forEach(scooter => {
+                if (Math.abs(scooter.coordinates.lon - location.long) < vehicleMarkerArea && Math.abs(scooter.coordinates.lat - location.lat) < vehicleMarkerArea) {
+                    updateMarker(new Vehicle(scooter.coordinates.lat, scooter.coordinates.lon, scooter.battery, 7));
+                }
+            });
+        })
+    }
 }
 
 class Bike {
     elecle (location) { //ID 6
         const url = 'https://api.elecle.bike/v1/bike?position=' + location.long + ',' + location.lat + '&radius=50&bike_type=UNIVERSE';
         const bearer = 'bearer RgVZfFQKm6R60lIjH9KFL4N3jSmdQF';
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             headers: {
-                'Authorization': bearer
+                'Authorization': bearer,
+                'request-url' : url
             },
             redirect: 'follow', // manual, *follow, error
         }).then((response) => {
@@ -147,30 +182,43 @@ class Bike {
         });
     }
     cookie (location) { //발암 500KB/request
-        const url = 'https://api.cookiebike.co.kr/app/service/bikes/kml?lang=ko&lat=' + location.lat + '&lon=' + location.long + '&filter=%5B%5D&minLon=0&minLat=0&maxLon=99999999&maxLat=9999999&bbox=14073744.877308,4428101.0898232,14145404.591318,4551737.9830572';
-        fetch(url, {
-            headers: {
-                'Authorization': bearer
-            },
+        const url = 'https://api.cookiebike.co.kr/app/service/bikes/kml?lang=ko&lat=' + location.lat + '&lon=' + location.long + '&filter=%5B%5D&minLon=0&minLat=0&maxLon=99999999&maxLat=9999999&bbox=00000000,0000000,99999999,9999999';
+        console.log(url);
+        fetch("https://tagopa.ksjit.com/s/", {
             redirect: 'follow', // manual, *follow, error
         }).then((response) => {
             if (!response.ok) {
                 console.log("Failed to get cookie path :(");
             }
-            console.log(response.text());
+            return response.text();
+        }).then((responseText) => {
             var parser = new DOMParser();
             var xmlDoc = null;
-            try { xmlDoc = parser.parseFromString(response.responseText, "application/xml"); } catch {
-                console.log(response.responseText)
+            try { xmlDoc = parser.parseFromString(responseText, "application/xml"); } catch {
+                console.log(responseText);
             }
+            //console.log(responseText);
+            dbg = xmlDoc;
             return xmlDoc;
         }).then((parsed) => {
-            var path = new Array();
-            parsed.getElementsByTagName("Placemark").forEach((item) => {
-                    item.getElementsByTagName("description").json();
+            var vehicleJsonArray = new Array();
+            var items = parsed.getElementsByTagName("Placemark");
+            //console.log(parsed);
+            for (var i=0;i<items.length;i++) {
+                vehicleJsonArray.push([JSON.parse(items[i].childNodes[1].textContent), items[i].childNodes[3].textContent.split(',')]);
+            }
+            return vehicleJsonArray;
+        }).then((jsonArray) => {
+            jsonArray.forEach(bike => {
+                var bikeLocation = bike[1].map(Number);
+                location.long -= 126;
+                location.lat -= 37;
+                if (bike[0].distance < vehicleMarkerArea*250000) {
+                    console.log(bike);
+                    updateMarker(new Vehicle(bikeLocation[1], bikeLocation[0], "(무동력)", 7))
+                }
             })
-            return path;
-        })
+        }).catch((e) => console.log(e));
     }
 }
 
@@ -179,18 +227,23 @@ class Transit {
     subwayPath(start, end) {
         const url = "http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoBySubway?ServiceKey=" + apiKey + "&startX=" + start.long + "&startY=" + start.lat + "&endX=" + end.long + "&endY=" + end.lat;
         console.log(url);
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             mode: 'no-cors', // no-cors, *cors, same-origin
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            headers: new Headers({
+                'request-url' : url
+            })
         }).then((response) => {
             if (!response.ok) {
                 console.log("Failed to get subway path :(");
             }
+            return response.text();
+        }).then((responseText) => {
             var parser = new DOMParser();
             var xmlDoc = null;
-            try { xmlDoc = parser.parseFromString(response.responseText, "application/xml"); } catch {
-                console.log(response.responseText)
+            try { xmlDoc = parser.parseFromString(responseText, "application/xml"); } catch {
+                console.log(responseText);
             }
             return xmlDoc;
         }).then((parsed) => {
@@ -205,10 +258,13 @@ class Transit {
     }
     busStop(location_name) {
         const url = "http://ws.bus.go.kr/api/rest/pathinfo/getLocationInfo?ServiceKey=" + apiKey + "?stSrch=" + location_name;
-        fetch(url, {
+        fetch("https://tagopa.ksjit.com/s/", {
             mode: 'no-cors', // no-cors, *cors, same-origin
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+            headers: new Headers({
+                'request-url' : url
+            })
         }).then((response) => {
             if (!response.ok) {
                 console.log("Failed to get subway path :(");
@@ -222,7 +278,7 @@ class Transit {
     path(start, end) {
         const url = "http://ws.bus.go.kr/api/rest/pathinfo/getPathInfoByBusNSub?ServiceKey=" + apiKey + "&startX=" + start.long + "&startY=" + start.lat + "&endX=" + end.long + "&endY=" + end.lat;
         //console.log(url);
-        fetch("service.ksjit.com", {
+        fetch("https://tagopa.ksjit.com/s/", {
             mode: 'no-cors', // no-cors, *cors, same-origin
             redirect: 'follow', // manual, *follow, error
             referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
